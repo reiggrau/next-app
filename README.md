@@ -40,7 +40,6 @@ For this project, we've provided some placeholder data in app/lib/placeholder-da
 
 ```bash
 # /app/lib/placeholder-data.json
-
 {
     "customers": [
         {
@@ -66,7 +65,6 @@ Take a look at the /app/lib/definitions.ts file. Here, we manually define the ty
 
 ```bash
 # /app/lib/definitions.ts
-
 export type Invoice = {
     id: string;
     customer_id: string;
@@ -84,7 +82,6 @@ You can import global.css in any component in your application, but it's usually
 
 ```bash
 # /app/layout.tsx
-
 import "./globals.css";
 ```
 
@@ -101,3 +98,136 @@ In Tailwind, you style elements by adding class names. For example, adding the c
 ## CSS Modules
 
 CSS Modules allow you to scope CSS to a component by automatically creating unique class names, so you don't have to worry about style collisions as well.
+
+```bash
+# /app/ui/home.module.css
+.shape {
+  height: 0;
+  width: 0;
+  border-bottom: 30px solid black;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+}
+```
+
+## Using the clsx library to toggle class names
+
+clsx is a library that lets you toggle class names easily.
+
+Suppose that you want to create an InvoiceStatus component which accepts status. The status can be 'pending' or 'paid'. If it's 'paid', you want the color to be green. If it's 'pending', you want the color to be gray.
+
+You can use clsx to conditionally apply the classes, like this:
+
+```bash
+# /app/ui/invoices/status.tsx
+import clsx from 'clsx';
+
+export default function InvoiceStatus({ status }: { status: string }) {
+  return (
+    <span
+      className={clsx(
+        'inline-flex items-center rounded-full px-2 py-1 text-sm',
+        {
+          'bg-gray-100 text-gray-500': status === 'pending',
+          'bg-green-500 text-white': status === 'paid',
+        },
+      )}
+    >
+    // ...
+)}
+```
+
+## Adding a primary font
+
+In your /app/ui folder, create a new file called fonts.ts. You'll use this file to keep the fonts that will be used throughout your application.
+
+```bash
+# /app/ui/fonts.ts
+import { Inter } from 'next/font/google';
+
+export const inter = Inter({ subsets: ['latin'] });
+```
+
+Finally, add the font to the <body> element in /app/layout.tsx:
+
+```bash
+# /app/layout.tsx
+
+import '@/app/ui/global.css';
+import { inter } from '@/app/ui/fonts';
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body className={`${inter.className} antialiased`}>{children}</body>
+    </html>
+  );
+}
+```
+
+By adding Inter to the <body> element, the font will be applied throughout your application. Here, you're also adding the Tailwind antialiased class which smooths out the font. It's not necessary to use this class, but it adds a nice touch.
+
+## Adding a secondary font
+
+You can also add fonts to specific elements of your application.
+
+In your fonts.ts file, import a secondary font called Lusitana and pass it to the <p> element in your /app/page.tsx file. In addition to specifying a subset like you did before, you'll also need to specify the font weight.
+
+## The <Image> component
+
+The <Image> Component is an extension of the HTML <img> tag, and comes with automatic image optimization, such as:
+
+- Preventing layout shift automatically when images are loading.
+- Resizing images to avoid shipping large images to devices with a smaller viewport.
+- Lazy loading images by default (images load as they enter the viewport).
+- Serving images in modern formats, like WebP and AVIF, when the browser supports it.
+
+Let's use the <Image> component. If you look inside the /public folder, you'll see there are two images: hero-desktop.png and hero-mobile.png. These two images are completely different, and they'll be shown depending if the user's device is a desktop or mobile.
+
+In your /app/page.tsx file, import the component from next/image. Then, add the image under the comment:
+
+```bash
+# /app/page.tsx
+import AcmeLogo from '@/app/ui/acme-logo';
+import { ArrowRightIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { lusitana } from '@/app/ui/fonts';
+import Image from 'next/image';
+
+export default function Page() {
+  return (
+    // ...
+    <div className="flex items-center justify-center p-6 md:w-3/5 md:px-28 md:py-12">
+      {/* Add Hero Images Here */}
+      <Image
+        src="/hero-desktop.png"
+        width={1000}
+        height={760}
+        className="hidden md:block"
+        alt="Screenshots of the dashboard project showing desktop version"
+      />
+    </div>
+    //...
+  );
+}
+```
+
+Here, you're setting the width to 1000 and height to 760 pixels. It's good practice to set the width and height of your images to avoid layout shift, these should be an aspect ratio identical to the source image.
+
+You'll also notice the class hidden to remove the image from the DOM on mobile screens, and md:block to show the image on desktop screens.
+
+Under the image you've just added, add another <Image> component for hero-mobile.png.
+
+```bash
+<Image
+    src="/hero-mobile.png"
+    width={560}
+    height={620}
+    className="block md:hidden"
+    alt="Screenshot of the dashboard project showing mobile version"
+/>
+```
