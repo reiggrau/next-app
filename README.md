@@ -231,3 +231,52 @@ Under the image you've just added, add another <Image> component for hero-mobile
     alt="Screenshot of the dashboard project showing mobile version"
 />
 ```
+
+## Nested routing
+
+Next.js uses file-system routing where folders are used to create nested routes. Each folder represents a route segment that maps to a URL segment.
+
+You can create separate UIs for each route using layout.tsx and page.tsx files.
+
+page.tsx is a special Next.js file that exports a React component, and it's required for the route to be accessible. In your application, you already have a page file: /app/page.tsx - this is the home page associated with the route /.
+
+To create a nested route, you can nest folders inside each other and add page.tsx files inside them. For example: /app/dashboard/page.tsx is associated with the /dashboard path.
+
+```bash
+# /app/dashboard/page.tsx
+export default function Page() {
+  return <p>Dashboard Page</p>;
+}
+```
+
+## Route layout
+
+Dashboards have some sort of navigation that is shared across multiple pages. In Next.js, you can use a special layout.tsx file to create UI that is shared between multiple pages. Let's create a layout for the dashboard pages!
+
+Inside the /dashboard folder, add a new file called layout.tsx and paste the following code:
+
+```bash
+# /app/dashboard/layout.tsx
+import SideNav from '@/app/ui/dashboard/sidenav';
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
+      <div className="w-full flex-none md:w-64">
+        <SideNav />
+      </div>
+      <div className="flex-grow p-6 md:overflow-y-auto md:p-12">{children}</div>
+    </div>
+  );
+}
+```
+
+First, you're importing the SideNav component into your layout. Any components you import into this file will be part of the layout.
+
+The Layout component receives a children prop. This child can either be a page or another layout. In your case, the pages inside /dashboard will automatically be nested inside a Layout.
+
+One benefit of using layouts in Next.js is that on navigation, only the page components update while the layout won't re-render. This is called partial rendering.
+
+## Root layout
+
+/app/layout.tsx is called a root layout and is required. Any UI you add to the root layout will be shared across all pages in your application. You can use the root layout to modify your html and body tags, and add metadata.
