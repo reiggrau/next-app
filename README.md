@@ -405,8 +405,71 @@ Here's the final code for nav-links.tsx:
 
 # Chapter 6: Setting Up Your Database
 
+## Connect and deploy your project
+
 In this chapter, you'll be setting up a PostgreSQL database from one of Vercel's marketplace integrations. You'll need to:
 
 1. Create a GitHub repository
-2. Create a Vercel account
-3. Connect and deploy your project
+2. Push your repository to Github
+3. Create a Vercel account
+4. Connect and deploy your project
+
+By connecting your GitHub repository, whenever you push changes to your main branch, Vercel will automatically redeploy your application with no configuration needed.
+
+## Create a Postgres database
+
+On your Vercel's dashboard, select the Storage tab from your project dashboard, then select Create Database. Depending on when your Vercel account was created, you may see the following options: Postgres (Powered by Neon), Neon, or Supabase. Choose your preferred provider and click Continue.
+
+Accept the terms and choose your region and plan if required. The default region for all Vercel projects is Washington D.C (iad1), and we recommend choosing this if available to reduce latency for data requests.
+
+Once connected, navigate to the .env.local tab, click Show secret and Copy Snippet. Make sure you reveal the secrets before copying them.
+
+Navigate to your code editor and rename the .env.example file to .env. Paste in the copied contents from Vercel.
+
+```bash
+# .env (but strings instead of *)
+POSTGRES_URL="************"
+POSTGRES_PRISMA_URL="*******************"
+SUPABASE_URL="************"
+NEXT_PUBLIC_SUPABASE_URL="************************"
+POSTGRES_URL_NON_POOLING="************************"
+SUPABASE_JWT_SECRET="*******************"
+POSTGRES_USER="*************"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="*****************************"
+POSTGRES_PASSWORD="*****************"
+POSTGRES_DATABASE="*****************"
+SUPABASE_SERVICE_ROLE_KEY="*************************"
+POSTGRES_HOST="*************"
+SUPABASE_ANON_KEY="*****************"
+```
+
+Important: Go to your .gitignore file and make sure .env is in the ignored files to prevent your database secrets from being exposed when you push to GitHub.
+
+Finally, run pnpm i @vercel/postgres in your terminal to install the Vercel Postgres SDK.
+
+```bash
+pnpm i @vercel/postgres
+```
+
+## Seed your database
+
+Now that your database has been created, let's seed it with some initial data.
+
+Inside of /app, there's a folder called seed. Uncomment this file. This folder contains a Next.js Route Handler, called route.ts, that will be used to seed your database. This creates a server-side endpoint that you can access in the browser to start populating your database.
+
+Don't worry if you don't understand everything the code is doing, but to give you an overview, the script uses SQL to create the tables, and the data from placeholder-data.ts file to populate them after they've been created.
+
+Ensure your local development server is running with pnpm run dev and navigate to localhost:3000/seed in your browser. When finished, you will see a message "Database seeded successfully" in the browser. Once completed, you can delete this file.
+
+## Executing queries
+
+Let's execute a query to make sure everything is working as expected. We'll use another Router Handler, query/route.ts, to query the database. Inside this file, you'll find a listInvoices() function that has the following SQL query.
+
+```bash
+SELECT invoices.amount, customers.name
+FROM invoices
+JOIN customers ON invoices.customer_id = customers.id
+WHERE invoices.amount = 666;
+```
+
+Uncomment the file and navigate to localhost:3000/query in your browser. You should see that an invoice amount and name is returned.
