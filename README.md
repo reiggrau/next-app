@@ -1,20 +1,26 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# Chapter 1: Getting Started
 
-First, run the development server:
+## Creating a new project
+
+To create a Next.js app, open your terminal, cd into the folder you'd like to keep your project, and run the following command:
+
+```bash
+npx create-next-app@latest
+```
+
+After the prompts, create-next-app will create a folder with your project name and install the required dependencies.
+
+Run 'npm run dev' to start the development server.
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit http://localhost:3000 to view your application.
+
+Edit theapp/page.tsx file and save it to see the updated result in your browser.
 
 ## Folder structure
 
@@ -73,6 +79,8 @@ export type Invoice = {
     status: "pending" | "paid";
 };
 ```
+
+# Chapter 2: CSS Styling
 
 ## Global styles
 
@@ -136,6 +144,8 @@ export default function InvoiceStatus({ status }: { status: string }) {
     // ...
 )}
 ```
+
+# Chapter 3: Optimizing Fonts and Images
 
 ## Adding a primary font
 
@@ -232,6 +242,8 @@ Under the image you've just added, add another <Image> component for hero-mobile
 />
 ```
 
+# Chapter 4: Creating Layouts and Pages
+
 ## Nested routing
 
 Next.js uses file-system routing where folders are used to create nested routes. Each folder represents a route segment that maps to a URL segment.
@@ -280,3 +292,113 @@ One benefit of using layouts in Next.js is that on navigation, only the page com
 ## Root layout
 
 /app/layout.tsx is called a root layout and is required. Any UI you add to the root layout will be shared across all pages in your application. You can use the root layout to modify your html and body tags, and add metadata.
+
+# Chapter 5: Navigating Between Pages
+
+## Why optimize navigation?
+
+To link between pages, you'd traditionally use the <a> HTML element. At the moment, the sidebar links use <a> elements, but notice what happens when you navigate between the home, invoices, and customers pages on your browser.
+
+Did you see it?
+
+There's a full page refresh on each page navigation!
+
+## The <Link> component
+
+In Next.js, you can use the <Link /> Component to link between pages in your application. <Link> allows you to do client-side navigation with JavaScript.
+
+To use the <Link /> component, open /app/ui/dashboard/nav-links.tsx, and import the Link component from next/link. Then, replace the <a> tag with <Link>:
+
+```bash
+# /app/ui/dashboard/nav-links.tsx
+import {
+  UserGroupIcon,
+  HomeIcon,
+  DocumentDuplicateIcon,
+} from '@heroicons/react/24/outline';
+import Link from 'next/link';
+
+// ...
+
+export default function NavLinks() {
+  return (
+    <>
+      {links.map((link) => {
+        const LinkIcon = link.icon;
+        return (
+          <Link
+            key={link.name}
+            href={link.href}
+            className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3"
+          >
+            <LinkIcon className="w-6" />
+            <p className="hidden md:block">{link.name}</p>
+          </Link>
+        );
+      })}
+    </>
+  );
+}
+```
+
+You should now be able to navigate between the pages without seeing a full refresh. Although parts of your application are rendered on the server, there's no full page refresh, making it feel like a web app.
+
+## Automatic code-splitting and prefetching
+
+To improve the navigation experience, Next.js automatically code splits your application by route segments. This is different from a traditional React SPA, where the browser loads all your application code on initial load.
+
+Splitting code by routes means that pages become isolated. If a certain page throws an error, the rest of the application will still work.
+
+Furthermore, in production, whenever <Link> components appear in the browser's viewport, Next.js automatically prefetches the code for the linked route in the background. By the time the user clicks the link, the code for the destination page will already be loaded in the background, and this is what makes the page transition near-instant!
+
+## Pattern: Showing active links
+
+A common UI pattern is to show an active link to indicate to the user what page they are currently on. To do this, you need to get the user's current path from the URL. Next.js provides a hook called usePathname() that you can use to check the path and implement this pattern.
+
+Since usePathname() is a hook, you'll need to turn nav-links.tsx into a Client Component. Add React's "use client" directive to the top of the file, then import usePathname() from next/navigation:
+
+```bash
+# /app/ui/dashboard/nav-links.tsx
+'use client';
+
+import {
+  UserGroupIcon,
+  HomeIcon,
+  InboxIcon,
+} from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+// ...
+```
+
+Next, assign the path to a variable called pathname inside your <NavLinks /> component:
+
+```bash
+# /app/ui/dashboard/nav-links.tsx
+export default function NavLinks() {
+  const pathname = usePathname();
+  // ...
+}
+```
+
+You can use the clsx library introduced in the chapter on CSS styling to conditionally apply class names when the link is active. When link.href matches the pathname, the link should be displayed with blue text and a light blue background.
+
+Here's the final code for nav-links.tsx:
+
+```bash
+# /app/ui/dashboard/nav-links.tsx
+<Link
+  key={link.name}
+  href={link.href}
+  className={clsx(
+    'flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3',
+    {
+      'bg-sky-100 text-blue-600': pathname === link.href,
+    },
+  )}
+>
+  <LinkIcon className="w-6" />
+  <p className="hidden md:block">{link.name}</p>
+</Link>
+```
