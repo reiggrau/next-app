@@ -402,3 +402,11 @@ Here's the final code for nav-links.tsx:
   <p className="hidden md:block">{link.name}</p>
 </Link>
 ```
+
+# Chapter 6: Setting Up Your Database
+
+In this chapter, you'll be setting up a PostgreSQL database from one of Vercel's marketplace integrations. You'll need to:
+
+1. Create a GitHub repository
+2. Create a Vercel account
+3. Connect and deploy your project
