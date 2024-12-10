@@ -474,7 +474,7 @@ WHERE invoices.amount = 666;
 
 Uncomment the file and navigate to localhost:3000/query in your browser. You should see that an invoice amount and name is returned.
 
-# CHapter 7: Fetching Data
+# Chapter 7: Fetching Data
 
 ## API layer
 
@@ -690,3 +690,60 @@ By using this pattern, you can:
 
 - Start executing all data fetches at the same time, which can lead to performance gains.
 - Use a native JavaScript pattern that can be applied to any library or framework.
+
+# CHapter 8: Static and Dynamic Rendering
+
+## Static Rendering
+
+With static rendering, data fetching and rendering happens on the server at build time (when you deploy) or when revalidating data.
+
+Whenever a user visits your application, the cached result is served. There are a couple of benefits of static rendering:
+
+- Faster Websites - Prerendered content can be cached and globally distributed. This ensures that users around the world can access your website's content more quickly and reliably.
+- Reduced Server Load - Because the content is cached, your server does not have to dynamically generate content for each user request.
+- SEO - Prerendered content is easier for search engine crawlers to index, as the content is already available when the page loads. This can lead to improved search engine rankings.
+
+Static rendering is useful for UI with no data or data that is shared across users, such as a static blog post or a product page. It might not be a good fit for a dashboard that has personalized data which is regularly updated.
+
+The opposite of static rendering is dynamic rendering.
+
+## Dynamic Rendering
+
+With dynamic rendering, content is rendered on the server for each user at request time (when the user visits the page). There are a couple of benefits of dynamic rendering:
+
+- Real-Time Data - Dynamic rendering allows your application to display real-time or frequently updated data. This is ideal for applications where data changes often.
+- User-Specific Content - It's easier to serve personalized content, such as dashboards or user profiles, and update the data based on user interaction.
+- Request Time Information - Dynamic rendering allows you to access information that can only be known at request time, such as cookies or the URL search parameters.
+
+## Simulating a Slow Data Fetch
+
+The dashboard application we're building is dynamic.
+
+However, there is still one problem mentioned in the previous chapter. What happens if one data request is slower than all the others?
+
+Let's simulate a slow data fetch. In your data.ts file, uncomment the console.log and setTimeout inside fetchRevenue():
+
+```bash
+# /app/lib/data.ts
+export async function fetchRevenue() {
+  try {
+    // We artificially delay a response for demo purposes.
+    // Don't do this in production :)
+    console.log('Fetching revenue data...');
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    const data = await sql<Revenue>`SELECT * FROM revenue`;
+
+    console.log('Data fetch completed after 3 seconds.');
+
+    return data.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch revenue data.');
+  }
+}
+```
+
+Here, you've added an artificial 3-second delay to simulate a slow data fetch. The result is that now your whole page is blocked from showing UI to the visitor while the data is being fetched. Which brings us to a common challenge developers have to solve:
+
+With dynamic rendering, your application is only as fast as your slowest data fetch.
