@@ -44,39 +44,38 @@ When you're building user interfaces, it helps to have some placeholder data. If
 
 For this project, we've provided some placeholder data in app/lib/placeholder-data.ts. Each JavaScript object in the file represents a table in your database. For example, for the invoices table:
 
-```bash
-# /app/lib/placeholder-data.json
+```json
+// /app/lib/placeholder-data.json
 {
-    "customers": [
-        {
-            "customer_id": "1",
-            "amount": 15795,
-            "date": "2022-12-06",
-            "status": "pending"
-        },
-        {
-            "customer_id": "2",
-            "amount": 20348,
-            "date": "2022-11-14",
-            "status": "pending"
-        }
-    ]
+  "customers": [
+    {
+      "customer_id": "1",
+      "amount": 15795,
+      "date": "2022-12-06",
+      "status": "pending"
+    },
+    {
+      "customer_id": "2",
+      "amount": 20348,
+      "date": "2022-11-14",
+      "status": "pending"
+    }
+  ]
 }
-
 ```
 
 ## TypeScript
 
 Take a look at the /app/lib/definitions.ts file. Here, we manually define the types that will be returned from the database. For example, the invoices table has the following types:
 
-```bash
-# /app/lib/definitions.ts
+```ts
+// /app/lib/definitions.ts
 export type Invoice = {
-    id: string;
-    customer_id: string;
-    amount: number;
-    date: string;
-    status: "pending" | "paid";
+  id: string;
+  customer_id: string;
+  amount: number;
+  date: string;
+  status: "pending" | "paid";
 };
 ```
 
@@ -88,8 +87,8 @@ If you look inside the /app/ui folder, you'll see a file called global.css. You 
 
 You can import global.css in any component in your application, but it's usually good practice to add it to your top-level component.
 
-```bash
-# /app/layout.tsx
+```tsx
+// /app/layout.tsx
 import "./globals.css";
 ```
 
@@ -99,7 +98,7 @@ Tailwind is a CSS framework that speeds up the development process by allowing y
 
 In Tailwind, you style elements by adding class names. For example, adding the class "text-blue-500" will turn the <h1> text blue:
 
-```bash
+```html
 <h1 className="text-blue-500">I'm blue!</h1>
 ```
 
@@ -107,8 +106,8 @@ In Tailwind, you style elements by adding class names. For example, adding the c
 
 CSS Modules allow you to scope CSS to a component by automatically creating unique class names, so you don't have to worry about style collisions as well.
 
-```bash
-# /app/ui/home.module.css
+```css
+/* /app/ui/home.module.css */
 .shape {
   height: 0;
   width: 0;
@@ -126,8 +125,8 @@ Suppose that you want to create an InvoiceStatus component which accepts status.
 
 You can use clsx to conditionally apply the classes, like this:
 
-```bash
-# /app/ui/invoices/status.tsx
+```tsx
+// /app/ui/invoices/status.tsx
 import clsx from 'clsx';
 
 export default function InvoiceStatus({ status }: { status: string }) {
@@ -151,20 +150,20 @@ export default function InvoiceStatus({ status }: { status: string }) {
 
 In your /app/ui folder, create a new file called fonts.ts. You'll use this file to keep the fonts that will be used throughout your application.
 
-```bash
-# /app/ui/fonts.ts
-import { Inter } from 'next/font/google';
+```tsx
+// /app/ui/fonts.ts
+import { Inter } from "next/font/google";
 
-export const inter = Inter({ subsets: ['latin'] });
+export const inter = Inter({ subsets: ["latin"] });
 ```
 
 Finally, add the font to the <body> element in /app/layout.tsx:
 
-```bash
-# /app/layout.tsx
+```tsx
+// /app/layout.tsx
 
-import '@/app/ui/global.css';
-import { inter } from '@/app/ui/fonts';
+import "@/app/ui/global.css";
+import { inter } from "@/app/ui/fonts";
 
 export default function RootLayout({
   children,
@@ -200,13 +199,13 @@ Let's use the <Image> component. If you look inside the /public folder, you'll s
 
 In your /app/page.tsx file, import the component from next/image. Then, add the image under the comment:
 
-```bash
-# /app/page.tsx
-import AcmeLogo from '@/app/ui/acme-logo';
-import { ArrowRightIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
-import { lusitana } from '@/app/ui/fonts';
-import Image from 'next/image';
+```tsx
+// /app/page.tsx
+import AcmeLogo from "@/app/ui/acme-logo";
+import { ArrowRightIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
+import { lusitana } from "@/app/ui/fonts";
+import Image from "next/image";
 
 export default function Page() {
   return (
@@ -232,13 +231,13 @@ You'll also notice the class hidden to remove the image from the DOM on mobile s
 
 Under the image you've just added, add another <Image> component for hero-mobile.png.
 
-```bash
+```tsx
 <Image
-    src="/hero-mobile.png"
-    width={560}
-    height={620}
-    className="block md:hidden"
-    alt="Screenshot of the dashboard project showing mobile version"
+  src="/hero-mobile.png"
+  width={560}
+  height={620}
+  className="block md:hidden"
+  alt="Screenshot of the dashboard project showing mobile version"
 />
 ```
 
@@ -254,8 +253,8 @@ page.tsx is a special Next.js file that exports a React component, and it's requ
 
 To create a nested route, you can nest folders inside each other and add page.tsx files inside them. For example: /app/dashboard/page.tsx is associated with the /dashboard path.
 
-```bash
-# /app/dashboard/page.tsx
+```tsx
+// /app/dashboard/page.tsx
 export default function Page() {
   return <p>Dashboard Page</p>;
 }
@@ -267,9 +266,9 @@ Dashboards have some sort of navigation that is shared across multiple pages. In
 
 Inside the /dashboard folder, add a new file called layout.tsx and paste the following code:
 
-```bash
-# /app/dashboard/layout.tsx
-import SideNav from '@/app/ui/dashboard/sidenav';
+```tsx
+// /app/dashboard/layout.tsx
+import SideNav from "@/app/ui/dashboard/sidenav";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -309,14 +308,14 @@ In Next.js, you can use the <Link /> Component to link between pages in your app
 
 To use the <Link /> component, open /app/ui/dashboard/nav-links.tsx, and import the Link component from next/link. Then, replace the <a> tag with <Link>:
 
-```bash
-# /app/ui/dashboard/nav-links.tsx
+```tsx
+// /app/ui/dashboard/nav-links.tsx
 import {
   UserGroupIcon,
   HomeIcon,
   DocumentDuplicateIcon,
-} from '@heroicons/react/24/outline';
-import Link from 'next/link';
+} from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 // ...
 
@@ -357,17 +356,17 @@ A common UI pattern is to show an active link to indicate to the user what page 
 
 Since usePathname() is a hook, you'll need to turn nav-links.tsx into a Client Component. Add React's "use client" directive to the top of the file, then import usePathname() from next/navigation:
 
-```bash
-# /app/ui/dashboard/nav-links.tsx
-'use client';
+```tsx
+// /app/ui/dashboard/nav-links.tsx
+"use client";
 
 import {
   UserGroupIcon,
   HomeIcon,
   InboxIcon,
-} from '@heroicons/react/24/outline';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+} from "@heroicons/react/24/outline";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 // ...
 ```
@@ -386,16 +385,16 @@ You can use the clsx library introduced in the chapter on CSS styling to conditi
 
 Here's the final code for nav-links.tsx:
 
-```bash
-# /app/ui/dashboard/nav-links.tsx
+```tsx
+// /app/ui/dashboard/nav-links.tsx
 <Link
   key={link.name}
   href={link.href}
   className={clsx(
-    'flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3',
+    "flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3",
     {
-      'bg-sky-100 text-blue-600': pathname === link.href,
-    },
+      "bg-sky-100 text-blue-600": pathname === link.href,
+    }
   )}
 >
   <LinkIcon className="w-6" />
@@ -465,7 +464,7 @@ Ensure your local development server is running with pnpm run dev and navigate t
 
 Let's execute a query to make sure everything is working as expected. We'll use another Router Handler, query/route.ts, to query the database. Inside this file, you'll find a listInvoices() function that has the following SQL query.
 
-```bash
+```sql
 SELECT invoices.amount, customers.name
 FROM invoices
 JOIN customers ON invoices.customer_id = customers.id
@@ -520,9 +519,9 @@ For this project, we'll write database queries using the Vercel Postgres SDK and
 
 Go to /app/lib/data.ts, here you'll see that we're importing the sql function from @vercel/postgres. This function allows you to query your database:
 
-```bash
-# /app/lib/data.ts
-import { sql } from '@vercel/postgres';
+```tsx
+// /app/lib/data.ts
+import { sql } from "@vercel/postgres";
 
 // ...
 ```
@@ -533,12 +532,12 @@ You can call sql inside any Server Component. But to allow you to navigate the c
 
 Now that you understand different ways of fetching data, let's fetch data for the dashboard overview page. Navigate to /app/dashboard/page.tsx, paste the following code, and spend some time exploring it:
 
-```bash
-# /app/dashboard/page.tsx
-import { Card } from '@/app/ui/dashboard/cards';
-import RevenueChart from '@/app/ui/dashboard/revenue-chart';
-import LatestInvoices from '@/app/ui/dashboard/latest-invoices';
-import { lusitana } from '@/app/ui/fonts';
+```tsx
+// /app/dashboard/page.tsx
+import { Card } from "@/app/ui/dashboard/cards";
+import RevenueChart from "@/app/ui/dashboard/revenue-chart";
+import LatestInvoices from "@/app/ui/dashboard/latest-invoices";
+import { lusitana } from "@/app/ui/fonts";
 
 export default async function Page() {
   return (
@@ -575,13 +574,13 @@ In the code above:
 
 To fetch data for the <RevenueChart/> component, import the fetchRevenue function from data.ts and call it inside your component:
 
-```bash
-# /app/dashboard/page.tsx
-import { Card } from '@/app/ui/dashboard/cards';
-import RevenueChart from '@/app/ui/dashboard/revenue-chart';
-import LatestInvoices from '@/app/ui/dashboard/latest-invoices';
-import { lusitana } from '@/app/ui/fonts';
-import { fetchRevenue } from '@/app/lib/data';
+```tsx
+// /app/dashboard/page.tsx
+import { Card } from "@/app/ui/dashboard/cards";
+import RevenueChart from "@/app/ui/dashboard/revenue-chart";
+import LatestInvoices from "@/app/ui/dashboard/latest-invoices";
+import { lusitana } from "@/app/ui/fonts";
+import { fetchRevenue } from "@/app/lib/data";
 
 export default async function Page() {
   const revenue = await fetchRevenue();
@@ -599,8 +598,8 @@ You could fetch all the invoices and sort through them using JavaScript. This is
 
 Instead of sorting through the latest invoices in-memory, you can use an SQL query to fetch only the last 5 invoices. For example, this is the SQL query from your data.ts file:
 
-```bash
-# /app/lib/data.ts
+```tsx
+// /app/lib/data.ts
 
 // Fetch the last 5 invoices, sorted by date
 const data = await sql<LatestInvoiceRaw>`
@@ -624,8 +623,8 @@ The cards will display the following data:
 
 You might be tempted to fetch all the invoices and customers, and use JavaScript to manipulate the data, but with SQL, you can fetch only the data you need.
 
-```bash
-# /app/lib/data.ts
+```tsx
+// /app/lib/data.ts
 
 const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
 const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
@@ -633,15 +632,15 @@ const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
 
 The function you will need to import is called fetchCardData. You will need to destructure the values returned from the function.
 
-```bash
-# /app/dashboard/page.tsx
+```tsx
+// /app/dashboard/page.tsx
 // ...
-  const {
-    numberOfInvoices,
-    numberOfCustomers,
-    totalPaidInvoices,
-    totalPendingInvoices,
-  } = await fetchCardData();
+const {
+  numberOfInvoices,
+  numberOfCustomers,
+  totalPaidInvoices,
+  totalPendingInvoices,
+} = await fetchCardData();
 // ...
 ```
 
@@ -666,7 +665,7 @@ A common way to avoid waterfalls is to initiate all data requests at the same ti
 
 In JavaScript, you can use the Promise.all() or Promise.allSettled() functions to initiate all promises at the same time. For example, in data.ts, we're using Promise.all() in the fetchCardData() function:
 
-```bash
+```tsx
 export async function fetchCardData() {
   try {
     const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
@@ -723,23 +722,23 @@ However, there is still one problem mentioned in the previous chapter. What happ
 
 Let's simulate a slow data fetch. In your data.ts file, uncomment the console.log and setTimeout inside fetchRevenue():
 
-```bash
-# /app/lib/data.ts
+```tsx
+// /app/lib/data.ts
 export async function fetchRevenue() {
   try {
     // We artificially delay a response for demo purposes.
     // Don't do this in production :)
-    console.log('Fetching revenue data...');
+    console.log("Fetching revenue data...");
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const data = await sql<Revenue>`SELECT * FROM revenue`;
 
-    console.log('Data fetch completed after 3 seconds.');
+    console.log("Data fetch completed after 3 seconds.");
 
     return data.rows;
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch revenue data.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch revenue data.");
   }
 }
 ```
@@ -767,8 +766,8 @@ Let's see how this works.
 
 In the /app/dashboard folder, create a new file called loading.tsx:
 
-```bash
-# /app/dashboard/loading.tsx
+```tsx
+// /app/dashboard/loading.tsx
 export default function Loading() {
   return <div>Loading...</div>;
 }
@@ -788,9 +787,9 @@ A loading skeleton is a simplified version of the UI. Many websites use them as 
 
 Inside your loading.tsx file, import a new component called <DashboardSkeleton>:
 
-```bash
-# /app/dashboard/loading.tsx
-import DashboardSkeleton from '@/app/ui/skeletons';
+```tsx
+// /app/dashboard/loading.tsx
+import DashboardSkeleton from "@/app/ui/skeletons";
 
 export default function Loading() {
   return <DashboardSkeleton />;
@@ -819,22 +818,22 @@ To do so, you'll need to move the data fetch to the component, let's update the 
 
 Delete all instances of fetchRevenue() and its data from /dashboard/(overview)/page.tsx. Then, import <Suspense> from React, and wrap it around <RevenueChart />. You can pass it a fallback component called <RevenueChartSkeleton>:
 
-```bash
-# /app/dashboard/(overview)/page.tsx
+```tsx
+// /app/dashboard/(overview)/page.tsx
 // ...
-import { Suspense } from 'react';
-import { RevenueChartSkeleton } from '@/app/ui/skeletons';
+import { Suspense } from "react";
+import { RevenueChartSkeleton } from "@/app/ui/skeletons";
 // ...
-  <Suspense fallback={<RevenueChartSkeleton />}>
-    <RevenueChart />
-  </Suspense>
+<Suspense fallback={<RevenueChartSkeleton />}>
+  <RevenueChart />
+</Suspense>;
 // ...
 ```
 
 Finally, update the <RevenueChart> component to fetch its own data and remove the prop passed to it:
 
-```bash
-# /app/ui/dashboard/revenue-chart.tsx
+```tsx
+// /app/ui/dashboard/revenue-chart.tsx
 import { generateYAxis } from '@/app/lib/utils';
 import { CalendarIcon } from '@heroicons/react/24/outline';
 import { lusitana } from '@/app/ui/fonts';
@@ -878,15 +877,15 @@ In your page.tsx file:
 4. Import a new skeleton component called <CardsSkeleton />.
 5. Wrap <CardWrapper /> in Suspense.
 
-```bash
-# /app/dashboard/page.tsx
-import CardWrapper from '@/app/ui/dashboard/cards';
+```tsx
+// /app/dashboard/page.tsx
+import CardWrapper from "@/app/ui/dashboard/cards";
 // ...
 import {
   RevenueChartSkeleton,
   LatestInvoicesSkeleton,
   CardsSkeleton,
-} from '@/app/ui/skeletons';
+} from "@/app/ui/skeletons";
 
 export default async function Page() {
   return (
@@ -907,10 +906,10 @@ export default async function Page() {
 
 Then, move into the file /app/ui/dashboard/cards.tsx, import the fetchCardData() function, and invoke it inside the <CardWrapper/> component. Make sure to uncomment any necessary code in this component.
 
-```bash
-# /app/ui/dashboard/cards.tsx
+```tsx
+// /app/ui/dashboard/cards.tsx
 // ...
-import { fetchCardData } from '@/app/lib/data';
+import { fetchCardData } from "@/app/lib/data";
 
 // ...
 
@@ -984,13 +983,13 @@ Let's see how you can implement PPR in your dashboard route.
 
 Enable PPR for your Next.js app by adding the ppr option to your next.config.mjs file:
 
-```bash
-# next.config.mjs
+```tsx
+// next.config.mjs
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
   experimental: {
-    ppr: 'incremental',
+    ppr: "incremental",
   },
 };
 
@@ -1001,9 +1000,9 @@ The 'incremental' value allows you to adopt PPR for specific routes.
 
 Next, add the experimental_ppr segment config option to your dashboard layout:
 
-```bash
-# /app/dashboard/layout.tsx
-import SideNav from '@/app/ui/dashboard/sidenav';
+```tsx
+// /app/dashboard/layout.tsx
+import SideNav from "@/app/ui/dashboard/sidenav";
 
 export const experimental_ppr = true;
 
@@ -1027,3 +1026,50 @@ To recap, you've done a few things to optimize data fetching in your application
 5. Implemented Streaming to prevent slow data requests from blocking your whole page, and to allow the user to start interacting with the UI without waiting for everything to load.
 6. Move data fetching down to the components that need it, thus isolating which parts of your routes should be dynamic.
    In the next chapter, we'll look at two common patterns you might need to implement when fetching data: search and pagination.
+
+# Chapter 11: Adding Search and Pagination
+
+In the previous chapter, you improved your dashboard's initial loading performance with streaming. Now let's move on to the /invoices page, and learn how to add search and pagination!
+
+## Starting code
+
+Inside your /dashboard/invoices/page.tsx file, paste the following code:
+
+```tsx
+// /app/dashboard/invoices/page.tsx
+import Pagination from "@/app/ui/invoices/pagination";
+import Search from "@/app/ui/search";
+import Table from "@/app/ui/invoices/table";
+import { CreateInvoice } from "@/app/ui/invoices/buttons";
+import { lusitana } from "@/app/ui/fonts";
+import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
+import { Suspense } from "react";
+
+export default async function Page() {
+  return (
+    <div className="w-full">
+      <div className="flex w-full items-center justify-between">
+        <h1 className={`${lusitana.className} text-2xl`}>Invoices</h1>
+      </div>
+      <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
+        <Search placeholder="Search invoices..." />
+        <CreateInvoice />
+      </div>
+      {/*  <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
+        <Table query={query} currentPage={currentPage} />
+      </Suspense> */}
+      <div className="mt-5 flex w-full justify-center">
+        {/* <Pagination totalPages={totalPages} /> */}
+      </div>
+    </div>
+  );
+}
+```
+
+Spend some time familiarizing yourself with the page and the components you'll be working with:
+
+- <Search/> allows users to search for specific invoices.
+- <Pagination/> allows users to navigate between pages of invoices.
+- <Table/> displays the invoices.
+
+Your search functionality will span the client and the server. When a user searches for an invoice on the client, the URL params will be updated, data will be fetched on the server, and the table will re-render on the server with the new data.
