@@ -2012,3 +2012,41 @@ Similarly to the createInvoice action, here you are:
 6. Calling redirect to redirect the user to the invoice's page.
 
 Test it out by editing an invoice. After submitting the form, you should be redirected to the invoices page, and the invoice should be updated.
+
+## Deleting an invoice
+
+To delete an invoice using a Server Action, wrap the delete button in a <form> element and pass the id to the Server Action using bind:
+
+```tsx
+// /app/ui/invoices/buttons.tsx
+
+import { deleteInvoice } from "@/app/lib/actions";
+
+// ...
+
+export function DeleteInvoice({ id }: { id: string }) {
+  const deleteInvoiceWithId = deleteInvoice.bind(null, id);
+
+  return (
+    <form action={deleteInvoiceWithId}>
+      <button type="submit" className="rounded-md border p-2 hover:bg-gray-100">
+        <span className="sr-only">Delete</span>
+        <TrashIcon className="w-4" />
+      </button>
+    </form>
+  );
+}
+```
+
+Inside your actions.ts file, create a new action called deleteInvoice.
+
+```ts
+// /app/lib/actions.ts
+
+export async function deleteInvoice(id: string) {
+  await sql`DELETE FROM invoices WHERE id = ${id}`;
+  revalidatePath("/dashboard/invoices");
+}
+```
+
+Since this action is being called in the /dashboard/invoices path, you don't need to call redirect. Calling revalidatePath will trigger a new server request and re-render the table.
