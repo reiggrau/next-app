@@ -87,7 +87,7 @@ If you look inside the /app/ui folder, you'll see a file called global.css. You 
 
 You can import global.css in any component in your application, but it's usually good practice to add it to your top-level component.
 
-```tsx
+```jsx
 // /app/layout.tsx
 import "./globals.css";
 ```
@@ -125,7 +125,7 @@ Suppose that you want to create an InvoiceStatus component which accepts status.
 
 You can use clsx to conditionally apply the classes, like this:
 
-```tsx
+```jsx
 // /app/ui/invoices/status.tsx
 import clsx from 'clsx';
 
@@ -150,7 +150,7 @@ export default function InvoiceStatus({ status }: { status: string }) {
 
 In your /app/ui folder, create a new file called fonts.ts. You'll use this file to keep the fonts that will be used throughout your application.
 
-```tsx
+```jsx
 // /app/ui/fonts.ts
 import { Inter } from "next/font/google";
 
@@ -159,7 +159,7 @@ export const inter = Inter({ subsets: ["latin"] });
 
 Finally, add the font to the <body> element in /app/layout.tsx:
 
-```tsx
+```jsx
 // /app/layout.tsx
 
 import "@/app/ui/global.css";
@@ -168,7 +168,7 @@ import { inter } from "@/app/ui/fonts";
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode,
 }) {
   return (
     <html lang="en">
@@ -199,7 +199,7 @@ Let's use the <Image> component. If you look inside the /public folder, you'll s
 
 In your /app/page.tsx file, import the component from next/image. Then, add the image under the comment:
 
-```tsx
+```jsx
 // /app/page.tsx
 import AcmeLogo from "@/app/ui/acme-logo";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
@@ -231,7 +231,7 @@ You'll also notice the class hidden to remove the image from the DOM on mobile s
 
 Under the image you've just added, add another <Image> component for hero-mobile.png.
 
-```tsx
+```jsx
 <Image
   src="/hero-mobile.png"
   width={560}
@@ -253,7 +253,7 @@ page.tsx is a special Next.js file that exports a React component, and it's requ
 
 To create a nested route, you can nest folders inside each other and add page.tsx files inside them. For example: /app/dashboard/page.tsx is associated with the /dashboard path.
 
-```tsx
+```jsx
 // /app/dashboard/page.tsx
 export default function Page() {
   return <p>Dashboard Page</p>;
@@ -266,7 +266,7 @@ Dashboards have some sort of navigation that is shared across multiple pages. In
 
 Inside the /dashboard folder, add a new file called layout.tsx and paste the following code:
 
-```tsx
+```jsx
 // /app/dashboard/layout.tsx
 import SideNav from "@/app/ui/dashboard/sidenav";
 
@@ -308,7 +308,7 @@ In Next.js, you can use the <Link /> Component to link between pages in your app
 
 To use the <Link /> component, open /app/ui/dashboard/nav-links.tsx, and import the Link component from next/link. Then, replace the <a> tag with <Link>:
 
-```tsx
+```jsx
 // /app/ui/dashboard/nav-links.tsx
 import {
   UserGroupIcon,
@@ -356,7 +356,7 @@ A common UI pattern is to show an active link to indicate to the user what page 
 
 Since usePathname() is a hook, you'll need to turn nav-links.tsx into a Client Component. Add React's "use client" directive to the top of the file, then import usePathname() from next/navigation:
 
-```tsx
+```jsx
 // /app/ui/dashboard/nav-links.tsx
 "use client";
 
@@ -373,8 +373,8 @@ import { usePathname } from "next/navigation";
 
 Next, assign the path to a variable called pathname inside your <NavLinks /> component:
 
-```bash
-# /app/ui/dashboard/nav-links.tsx
+```jsx
+// /app/ui/dashboard/nav-links.tsx
 export default function NavLinks() {
   const pathname = usePathname();
   // ...
@@ -385,7 +385,7 @@ You can use the clsx library introduced in the chapter on CSS styling to conditi
 
 Here's the final code for nav-links.tsx:
 
-```tsx
+```jsx
 // /app/ui/dashboard/nav-links.tsx
 <Link
   key={link.name}
@@ -519,7 +519,7 @@ For this project, we'll write database queries using the Vercel Postgres SDK and
 
 Go to /app/lib/data.ts, here you'll see that we're importing the sql function from @vercel/postgres. This function allows you to query your database:
 
-```tsx
+```jsx
 // /app/lib/data.ts
 import { sql } from "@vercel/postgres";
 
@@ -532,7 +532,7 @@ You can call sql inside any Server Component. But to allow you to navigate the c
 
 Now that you understand different ways of fetching data, let's fetch data for the dashboard overview page. Navigate to /app/dashboard/page.tsx, paste the following code, and spend some time exploring it:
 
-```tsx
+```jsx
 // /app/dashboard/page.tsx
 import { Card } from "@/app/ui/dashboard/cards";
 import RevenueChart from "@/app/ui/dashboard/revenue-chart";
@@ -574,7 +574,7 @@ In the code above:
 
 To fetch data for the <RevenueChart/> component, import the fetchRevenue function from data.ts and call it inside your component:
 
-```tsx
+```jsx
 // /app/dashboard/page.tsx
 import { Card } from "@/app/ui/dashboard/cards";
 import RevenueChart from "@/app/ui/dashboard/revenue-chart";
@@ -598,11 +598,14 @@ You could fetch all the invoices and sort through them using JavaScript. This is
 
 Instead of sorting through the latest invoices in-memory, you can use an SQL query to fetch only the last 5 invoices. For example, this is the SQL query from your data.ts file:
 
-```tsx
+```jsx
 // /app/lib/data.ts
 
 // Fetch the last 5 invoices, sorted by date
-const data = await sql<LatestInvoiceRaw>`
+const data =
+  (await sql) <
+  LatestInvoiceRaw >
+  `
   SELECT invoices.amount, customers.name, customers.image_url, customers.email
   FROM invoices
   JOIN customers ON invoices.customer_id = customers.id
@@ -623,7 +626,7 @@ The cards will display the following data:
 
 You might be tempted to fetch all the invoices and customers, and use JavaScript to manipulate the data, but with SQL, you can fetch only the data you need.
 
-```tsx
+```jsx
 // /app/lib/data.ts
 
 const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
@@ -632,7 +635,7 @@ const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
 
 The function you will need to import is called fetchCardData. You will need to destructure the values returned from the function.
 
-```tsx
+```jsx
 // /app/dashboard/page.tsx
 // ...
 const {
@@ -665,7 +668,7 @@ A common way to avoid waterfalls is to initiate all data requests at the same ti
 
 In JavaScript, you can use the Promise.all() or Promise.allSettled() functions to initiate all promises at the same time. For example, in data.ts, we're using Promise.all() in the fetchCardData() function:
 
-```tsx
+```jsx
 export async function fetchCardData() {
   try {
     const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
@@ -722,7 +725,7 @@ However, there is still one problem mentioned in the previous chapter. What happ
 
 Let's simulate a slow data fetch. In your data.ts file, uncomment the console.log and setTimeout inside fetchRevenue():
 
-```tsx
+```jsx
 // /app/lib/data.ts
 export async function fetchRevenue() {
   try {
@@ -731,7 +734,7 @@ export async function fetchRevenue() {
     console.log("Fetching revenue data...");
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
-    const data = await sql<Revenue>`SELECT * FROM revenue`;
+    const data = (await sql) < Revenue > `SELECT * FROM revenue`;
 
     console.log("Data fetch completed after 3 seconds.");
 
@@ -766,7 +769,7 @@ Let's see how this works.
 
 In the /app/dashboard folder, create a new file called loading.tsx:
 
-```tsx
+```jsx
 // /app/dashboard/loading.tsx
 export default function Loading() {
   return <div>Loading...</div>;
@@ -787,7 +790,7 @@ A loading skeleton is a simplified version of the UI. Many websites use them as 
 
 Inside your loading.tsx file, import a new component called <DashboardSkeleton>:
 
-```tsx
+```jsx
 // /app/dashboard/loading.tsx
 import DashboardSkeleton from "@/app/ui/skeletons";
 
@@ -818,7 +821,7 @@ To do so, you'll need to move the data fetch to the component, let's update the 
 
 Delete all instances of fetchRevenue() and its data from /dashboard/(overview)/page.tsx. Then, import <Suspense> from React, and wrap it around <RevenueChart />. You can pass it a fallback component called <RevenueChartSkeleton>:
 
-```tsx
+```jsx
 // /app/dashboard/(overview)/page.tsx
 // ...
 import { Suspense } from "react";
@@ -832,7 +835,7 @@ import { RevenueChartSkeleton } from "@/app/ui/skeletons";
 
 Finally, update the <RevenueChart> component to fetch its own data and remove the prop passed to it:
 
-```tsx
+```jsx
 // /app/ui/dashboard/revenue-chart.tsx
 import { generateYAxis } from '@/app/lib/utils';
 import { CalendarIcon } from '@heroicons/react/24/outline';
@@ -877,7 +880,7 @@ In your page.tsx file:
 4. Import a new skeleton component called <CardsSkeleton />.
 5. Wrap <CardWrapper /> in Suspense.
 
-```tsx
+```jsx
 // /app/dashboard/page.tsx
 import CardWrapper from "@/app/ui/dashboard/cards";
 // ...
@@ -906,7 +909,7 @@ export default async function Page() {
 
 Then, move into the file /app/ui/dashboard/cards.tsx, import the fetchCardData() function, and invoke it inside the <CardWrapper/> component. Make sure to uncomment any necessary code in this component.
 
-```tsx
+```jsx
 // /app/ui/dashboard/cards.tsx
 // ...
 import { fetchCardData } from "@/app/lib/data";
@@ -983,7 +986,7 @@ Let's see how you can implement PPR in your dashboard route.
 
 Enable PPR for your Next.js app by adding the ppr option to your next.config.mjs file:
 
-```tsx
+```jsx
 // next.config.mjs
 /** @type {import('next').NextConfig} */
 
@@ -1000,7 +1003,7 @@ The 'incremental' value allows you to adopt PPR for specific routes.
 
 Next, add the experimental_ppr segment config option to your dashboard layout:
 
-```tsx
+```jsx
 // /app/dashboard/layout.tsx
 import SideNav from "@/app/ui/dashboard/sidenav";
 
@@ -1035,7 +1038,7 @@ In the previous chapter, you improved your dashboard's initial loading performan
 
 Inside your /dashboard/invoices/page.tsx file, paste the following code:
 
-```tsx
+```jsx
 // /app/dashboard/invoices/page.tsx
 import Pagination from "@/app/ui/invoices/pagination";
 import Search from "@/app/ui/search";
@@ -1108,7 +1111,7 @@ Go into the <Search> Component (/app/ui/search.tsx), and you'll notice:
 
 Create a new handleSearch function, and add an onChange listener to the <input> element. onChange will invoke handleSearch whenever the input value changes.
 
-```tsx
+```jsx
 // /app/ui/search.tsx
 "use client";
 
@@ -1151,7 +1154,7 @@ Great! You're capturing the user's search input. Now, you need to update the URL
 
 4. Now that you have the query string. You can use Next.js's useRouter and usePathname hooks to update the URL. Import useRouter and usePathname from 'next/navigation', and use the replace method from useRouter() inside handleSearch:
 
-```tsx
+```jsx
 // /app/ui/search.tsx
 "use client";
 
@@ -1187,7 +1190,7 @@ Here's a breakdown of what's happening:
 
 To ensure the input field is in sync with the URL and will be populated when sharing, you can pass a defaultValue to input by reading from searchParams:
 
-```tsx
+```jsx
 // /app/ui/search.tsx
 <input
   className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
@@ -1213,7 +1216,7 @@ Navigate back to the invoices page.
 
 Page components accept a prop called searchParams, so you can pass the current URL params to the <Table> component.
 
-```tsx
+```jsx
 // /app/dashboard/invoices/page.tsx
 import Pagination from "@/app/ui/invoices/pagination";
 import Search from "@/app/ui/search";
@@ -1225,9 +1228,9 @@ import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
 
 export default async function Page(props: {
   searchParams?: Promise<{
-    query?: string;
-    page?: string;
-  }>;
+    query?: string,
+    page?: string,
+  }>,
 }) {
   const searchParams = await props.searchParams;
   const query = searchParams?.query || "";
@@ -1255,15 +1258,15 @@ export default async function Page(props: {
 
 If you navigate to the <Table> Component, you'll see that the two props, query and currentPage, are passed to the fetchFilteredInvoices() function which returns the invoices that match the query.
 
-```tsx
+```jsx
 // /app/ui/invoices/table.tsx
 // ...
 export default async function InvoicesTable({
   query,
   currentPage,
 }: {
-  query: string;
-  currentPage: number;
+  query: string,
+  currentPage: number,
 }) {
   const invoices = await fetchFilteredInvoices(query, currentPage);
   // ...
@@ -1305,7 +1308,7 @@ pnpm i use-debounce
 
 In your <Search> Component, import a function called useDebouncedCallback:
 
-```tsx
+```jsx
 // /app/ui/search.tsx
 // ...
 import { useDebouncedCallback } from "use-debounce";
@@ -1338,7 +1341,7 @@ Navigate to the <Pagination/> component and you'll notice that it's a Client Com
 
 In /dashboard/invoices/page.tsx, import a new function called fetchInvoicesPages and pass the query from searchParams as an argument:
 
-```tsx
+```jsx
 // /app/dashboard/invoices/page.tsx
 // ...
 import { fetchInvoicesPages } from '@/app/lib/data';
@@ -1366,15 +1369,15 @@ fetchInvoicesPages returns the total number of pages based on the search query. 
 
 Next, pass the totalPages prop to the <Pagination/> component:
 
-```tsx
+```jsx
 // /app/dashboard/invoices/page.tsx
 // ...
 
 export default async function Page(props: {
   searchParams?: Promise<{
-    query?: string;
-    page?: string;
-  }>;
+    query?: string,
+    page?: string,
+  }>,
 }) {
   const searchParams = await props.searchParams;
   const query = searchParams?.query || "";
@@ -1403,7 +1406,7 @@ export default async function Page(props: {
 
 Navigate to the <Pagination/> component and import the usePathname and useSearchParams hooks. We will use this to get the current page and set the new page. Make sure to also uncomment the code in this component. Your application will break temporarily as you haven't implemented the <Pagination/> logic yet. Let's do that now!
 
-```tsx
+```jsx
 // /app/ui/invoices/pagination.tsx
 "use client";
 
@@ -1424,7 +1427,7 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
 
 Next, create a new function inside the <Pagination> Component called createPageURL. Similarly to the search, you'll use URLSearchParams to set the new page number, and pathName to create the URL string.
 
-```tsx
+```jsx
 // /app/ui/invoices/pagination.tsx
 // ...
 export default function Pagination({ totalPages }: { totalPages: number }) {
@@ -1451,7 +1454,7 @@ Here's a breakdown of what's happening:
 
 Finally, when the user types a new search query, you want to reset the page number to 1. You can do this by updating the handleSearch function in your <Search> component:
 
-```tsx
+```jsx
 // /app/ui/search.tsx
 'use client';
 
@@ -1490,7 +1493,7 @@ In React, you can use the action attribute in the <form> element to invoke actio
 
 For example:
 
-```tsx
+```jsx
 // Server Component
 export default function Page() {
   // Action
@@ -1528,7 +1531,7 @@ To start, inside the /invoices folder, add a new route segment called /create wi
 
 You'll be using this route to create new invoices. Inside your page.tsx file, paste the following code, then spend some time studying it:
 
-```tsx
+```jsx
 // /dashboard/invoices/create/page.tsx
 import Form from "@/app/ui/invoices/create-form";
 import Breadcrumbs from "@/app/ui/invoices/breadcrumbs";
@@ -1590,7 +1593,7 @@ export async function createInvoice(formData: FormData) {}
 
 Then, in your <Form> component, import the createInvoice from your actions.ts file. Add a action attribute to the <form> element, and call the createInvoice action.
 
-```tsx
+```jsx
 // /app/ui/invoices/create-form.tsx
 import { customerField } from '@/app/lib/definitions';
 import Link from 'next/link';
@@ -1833,7 +1836,7 @@ In your <Table> component, notice there's a <UpdateInvoice /> button that receiv
 
 Navigate to your <UpdateInvoice /> component, and update the href of the Link to accept the id prop. You can use template literals to link to a dynamic route segment:
 
-```tsx
+```jsx
 // /app/ui/invoices/buttons.tsx
 
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
@@ -1857,7 +1860,7 @@ export function UpdateInvoice({ id }: { id: string }) {
 
 Back on your <Page> component, paste the following code:
 
-```tsx
+```jsx
 // /app/dashboard/invoices/[id]/edit/page.tsx
 
 import Form from "@/app/ui/invoices/edit-form";
@@ -1887,7 +1890,7 @@ Notice how it's similar to your /create invoice page, except it imports a differ
 
 In addition to searchParams, page components also accept a prop called params which you can use to access the id.
 
-```tsx
+```jsx
 // /app/dashboard/invoices/[id]/edit/page.tsx
 
 import Form from "@/app/ui/invoices/edit-form";
@@ -1910,7 +1913,7 @@ Then:
 
 You can use Promise.all to fetch both the invoice and customers in parallel:
 
-```tsx
+```jsx
 // /dashboard/invoices/[id]/edit/page.tsx
 
 import Form from "@/app/ui/invoices/edit-form";
@@ -1942,7 +1945,7 @@ However, if you prefer cleaner URLs, you might prefer to use auto-incrementing k
 
 Lastly, you want to pass the id to the Server Action so you can update the right record in your database. You cannot pass the id as an argument like so:
 
-```tsx
+```jsx
 // /app/ui/invoices/edit-form.tsx
 
 // Passing an id as argument won't work
@@ -1951,7 +1954,7 @@ Lastly, you want to pass the id to the Server Action so you can update the right
 
 Instead, you can pass id to the Server Action using JS bind. This will ensure that any values passed to the Server Action are encoded.
 
-```tsx
+```jsx
 // /app/ui/invoices/edit-form.tsx
 
 // ...
@@ -1961,8 +1964,8 @@ export default function EditInvoiceForm({
   invoice,
   customers,
 }: {
-  invoice: InvoiceForm;
-  customers: CustomerField[];
+  invoice: InvoiceForm,
+  customers: CustomerField[],
 }) {
   const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
 
@@ -2017,7 +2020,7 @@ Test it out by editing an invoice. After submitting the form, you should be redi
 
 To delete an invoice using a Server Action, wrap the delete button in a <form> element and pass the id to the Server Action using bind:
 
-```tsx
+```jsx
 // /app/ui/invoices/buttons.tsx
 
 import { deleteInvoice } from "@/app/lib/actions";
@@ -2050,3 +2053,176 @@ export async function deleteInvoice(id: string) {
 ```
 
 Since this action is being called in the /dashboard/invoices path, you don't need to call redirect. Calling revalidatePath will trigger a new server request and re-render the table.
+
+# Chapter 13: Handling Errors
+
+## Adding try/catch to Server Actions
+
+First, let's add JavaScript's try/catch statements to your Server Actions to allow you to handle errors gracefully.
+
+```ts
+// /app/lib/actions.ts
+// ...
+try {
+  await sql`
+      INSERT INTO invoices (customer_id, amount, status, date)
+      VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
+    `;
+} catch (error) {
+  return {
+    message: "Database Error: Failed to Create Invoice.",
+  };
+}
+
+revalidatePath("/dashboard/invoices");
+redirect("/dashboard/invoices");
+// ...
+```
+
+Note how redirect is being called outside of the try/catch block. This is because redirect works by throwing an error, which would be caught by the catch block. To avoid this, you can call redirect after try/catch. redirect would only be reachable if try is successful.
+
+Now, let's check what happens when an error is thrown in your Server Action. You can do this by throwing an error earlier. For example, in the deleteInvoice action, throw an error at the top of the function:
+
+```ts
+// /app/lib/actions.ts
+
+export async function deleteInvoice(id: string) {
+  throw new Error("Failed to Delete Invoice");
+
+  // Unreachable code block
+  try {
+    await sql`DELETE FROM invoices WHERE id = ${id}`;
+    revalidatePath("/dashboard/invoices");
+    return { message: "Deleted Invoice" };
+  } catch (error) {
+    return { message: "Database Error: Failed to Delete Invoice" };
+  }
+}
+```
+
+When you try to delete an invoice, you should see an error on localhost. Ensure that you remove this error after testing and before moving onto the next section.
+
+Seeing these errors are helpful while developing as you can catch any potential problems early. However, you also want to show errors to the user to avoid an abrupt failure and allow your application to continue running.
+
+This is where Next.js error.tsx file comes in.
+
+## Handling all errors with error.tsx
+
+The error.tsx file can be used to define a UI boundary for a route segment. It serves as a catch-all for unexpected errors and allows you to display a fallback UI to your users.
+
+Inside your /dashboard/invoices folder, create a new file called error.tsx and paste the following code:
+
+```jsx
+// /dashboard/invoices/error.tsx
+
+"use client";
+
+import { useEffect } from "react";
+
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string },
+  reset: () => void,
+}) {
+  useEffect(() => {
+    // Optionally log the error to an error reporting service
+    console.error(error);
+  }, [error]);
+
+  return (
+    <main className="flex h-full flex-col items-center justify-center">
+      <h2 className="text-center">Something went wrong!</h2>
+      <button
+        className="mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
+        onClick={
+          // Attempt to recover by trying to re-render the invoices route
+          () => reset()
+        }
+      >
+        Try again
+      </button>
+    </main>
+  );
+}
+```
+
+There are a few things you'll notice about the code above:
+
+- "use client" - error.tsx needs to be a Client Component.
+
+- It accepts two props:
+
+1. error: This object is an instance of JavaScript's native Error object.
+2. reset: This is a function to reset the error boundary. When executed, the function will try to re-render the route segment.
+
+## Handling 404 errors with the notFound function
+
+Another way you can handle errors gracefully is by using the notFound function. While error.tsx is useful for catching all errors, notFound can be used when you try to fetch a resource that doesn't exist.
+
+For example, visit http://localhost:3000/dashboard/invoices/2e94d1ed-d220-449f-9f11-f0bbceed9645/edit.
+
+This is a fake UUID that doesn't exist in your database.
+
+You'll immediately see error.tsx kicks in because this is a child route of /invoices where error.tsx is defined.
+
+However, if you want to be more specific, you can show a 404 error to tell the user the resource they're trying to access hasn't been found.
+
+Now that you know the invoice doesn't exist in your database, let's use notFound to handle it. Navigate to /dashboard/invoices/[id]/edit/page.tsx, and import { notFound } from 'next/navigation'.
+
+Then, you can use a conditional to invoke notFound if the invoice doesn't exist:
+
+```jsx
+// /dashboard/invoices/[id]/edit/page.tsx
+
+import { fetchInvoiceById, fetchCustomers } from "@/app/lib/data";
+import { updateInvoice } from "@/app/lib/actions";
+import { notFound } from "next/navigation";
+
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const id = params.id;
+  const [invoice, customers] = await Promise.all([
+    fetchInvoiceById(id),
+    fetchCustomers(),
+  ]);
+
+  if (!invoice) {
+    notFound();
+  }
+
+  // ...
+}
+```
+
+Perfect! <Page> will now throw an error if a specific invoice is not found. To show an error UI to the user. Create a not-found.tsx file inside the /edit folder.
+
+Then, inside the not-found.tsx file, paste the following the code:
+
+```jsx
+// /dashboard/invoices/[id]/edit/not-found.tsx
+
+import Link from "next/link";
+import { FaceFrownIcon } from "@heroicons/react/24/outline";
+
+export default function NotFound() {
+  return (
+    <main className="flex h-full flex-col items-center justify-center gap-2">
+      <FaceFrownIcon className="w-10 text-gray-400" />
+      <h2 className="text-xl font-semibold">404 Not Found</h2>
+      <p>Could not find the requested invoice.</p>
+      <Link
+        href="/dashboard/invoices"
+        className="mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
+      >
+        Go Back
+      </Link>
+    </main>
+  );
+}
+```
+
+Refresh the route, and you should now see the not-found UI.
+
+That's something to keep in mind, notFound will take precedence over error.tsx, so you can reach out for it when you want to handle more specific errors!
